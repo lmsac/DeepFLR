@@ -1,0 +1,19 @@
+import fastNLP
+maxlength=55              
+maxlength_hela1charge3=49#最长序列长度
+maxlength_hela2charge3=44
+maxlength_phos2charge2=33
+maxlength_phos2charge3=46
+acid_size=22#氨基酸种类数(包含unk和pad)
+N_epochs=300
+vocab_save=False
+vocab=fastNLP.Vocabulary().load("phosT/phosT_vocab")
+BATCH_SIZE=128
+device="cuda:0"
+num_col=24
+seed=89
+dropout=0.3
+lr=4*1e-5
+embed_size=512
+nhead=8
+num_layers=6
