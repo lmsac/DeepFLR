@@ -1,45 +1,52 @@
 import pandas as pd
 import numpy as np
+
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument(
-        "--inputfile",
+        "--modelresultfile",
         default=None,
         type=str,
         required=True,
-        help="inputfilepath",
+        help="inputfile,modelresult from mgfprocess.py ",
     )
 parser.add_argument(
-        "--maxquantfile",
+        "--sequencefile",
         default=None,
-        # default="./output_train/train_pred_gold_ner.json",
         type=str,
-        required=False,
-        help="inputmaxquantfile",
+        required=True,
+        help="sequencefile from Targetdecoy_phosphopeptides_generation_{mono,multi}.py",
     )
 parser.add_argument(
-        "--outputfile",
-        default=None,
-        # default="./output_train/train_pred_gold_ner.json",
+        "--outputresult",
+        default="outputresult.csv",
         type=str,
         required=False,
         help="output filename",
     )
 
+parser.add_argument(
+        "--outputfileFLRPSM",
+        default="outputfileFLRPSM.csv",
+        type=str,
+        required=False,
+        help="output filename",
+    )
 
     
 args = parser.parse_args()
-inputfile=args.inputfile
-outputfile=args.outputfile
-maxquantfile=args.maxquantfile
+inputfile=args.modelresultfile
+outputfile1=args.outputresult
+sequencefile=args.sequencefile
+outputfile2=args.outputfileFLRPSM
 
-df=pd.read_csv("PXD003344_Biological_sample_modelresult.csv")
+df=pd.read_csv(inputfile)
 df["score"]=df["score"].str.replace("tensor(",'',regex=False)
 df["score"]=df["score"].str.replace(".)",'',regex=False)
 df["score"]=df["score"].str.replace(")",'',regex=False)
 df["score"]=df["score"].astype("float")
 #2963
-df1=pd.read_csv("PXD003344_Biological_sample_maxquant_newmodel_sequence.csv")
+df1=pd.read_csv(sequencefile)
 df1.columns=["SourceFile","Fspectrum","PP.Charge","exp_strip_sequence","Peptide","key_x"]
 df=pd.merge(df,df1,on=["SourceFile","Fspectrum","key_x"])
 df=df[["SourceFile","Fspectrum","Peptide","PEP.StrippedSequence","key_x","score"]]
@@ -51,7 +58,7 @@ df["score"]=df["score"].astype("float")
 df=df.sort_values(by='score',ascending=False)
 df.reset_index(drop=True,inplace=True)
 dfmax=df.drop_duplicates(subset=['SourceFile', 'Fspectrum', 'Peptide'])
-# dfmax.to_csv("del.csv",index=False)
+
 dftruemax=dfmax.loc[dfmax["striptrue"]==dfmax["PEP.StrippedSequence"]]
 dffalsemax=dfmax.loc[dfmax["striptrue"]!=dfmax["PEP.StrippedSequence"]]
 dftrue=df.loc[df["striptrue"]==df["PEP.StrippedSequence"]]
@@ -63,7 +70,8 @@ print(dfdecoynum)
 
 df=pd.concat([dfmax,dftrue])
 df=df.drop_duplicates()
-df.to_csv("del.csv")
+
+
 f =lambda x: x.score.iloc[0]-x.score.iloc[1]
 dfdelta=df.groupby(["Fspectrum","SourceFile","Peptide"]).apply(f)
 dfdelta=pd.DataFrame(dfdelta).reset_index(drop=False)
@@ -80,7 +88,7 @@ print(ww.shape)
 #
 df=pd.concat([zz,ww])
 print(df.shape)
-# df.to_csv("graph_model.csv",index=False)
+df.to_csv("graph_model.csv",index=False)
 
 
 df["deltascore"]=df["deltascore"].astype("float")
@@ -97,7 +105,7 @@ dftarget=df
 dftarget=dftarget["deltascore"]
 dftarget=dftarget.drop_duplicates()
 dftarget=dftarget.sort_values(ascending=True)
-dftarget = np.array(dftarget) #先将数据框转换为数组
+dftarget = np.array(dftarget) #transfer to np.array
 dftarget = dftarget.tolist()
 for a in dftarget:
     print(a)
@@ -115,4 +123,4 @@ for a in dftarget:
     down+=1
     if decoy_score == 0:
         break
-out.to_csv("del.csv",index=False)
+out.to_csv(outputfile,index=False)

@@ -3,7 +3,7 @@
 ##  Train
 Training data path: `Tprocessed2.json`.
 ### Train MS/MS
-1. Use `matrixwithdict.py` (func:report2matrix(path)) to get target json file.
+1. Use `matrixwithdict.py` (func:report2matrix(path)) to get target json file. The input.csv is in the form of Spectromine searching result.
 
 `python matrixwithdict.py 
 --do_ms2 
@@ -22,8 +22,8 @@ Training data path: `Tprocessed2.json`.
 
 `python matrixwithdict.py 
 --do_ms2 
---DDAfile fintune/mouse_ear_cress_fintune/mouse_ear_cress_fintune_test_dataset.csv 
---outputfile msmstest/human_monophos.json`
+--DDAfile input.csv 
+--outputfile output.json`
 
 2. `python test.py` or `testirt.py`
 
@@ -33,26 +33,26 @@ Training data path: `Tprocessed2.json`.
 --no_target 
 --inputfile input.csv` 
 
-outputfile is `input`+`modelmonomz.csv`
+outputfile is `input`+`modelmonomz.csv`, that is `inputmodelmonomz.csv`.
 If having the `--only_combine` we do only `combinerawresult.py`
-to get final score ,do the following, inputfile is the outputfile above 
+
+To get final score ,do the following, inputfile is the outputfile above, mgfdatafold is the folder containing files endwith `.mgf`. If it's your first time running, use `--do_mgfprocess`
 
 `python mgfprocess.py 
 --do_mgfprocess 
 --do_scoreprediction 
---inputfile mann_exchange_model_sequence_1_task1modeldatamonomz.csv 
---outputfile mann_task1.csv 
+--inputfile inputmodelmonomz.csv 
+--outputfile modelresult.csv 
 --mgfdatafold mann_mgf`
 
-if don't need mgfprocess 
+otherwise,
 
 `python mgfprocess.py 
 --do_scoreprediction 
---inputfile mann_exchange_model_sequence_1_task1modelmonomz.csv 
---outputfile mann_task1.csv 
+--inputfile inputmodelmonomz.csv  
+--outputfile modelresult.csv
 --mgfdatafold mann_mgf` 
 
-the default outputfile is `decoyoutputscore.csv`
 
 ## pdeep2test
 `python matrixwithdict.py 
@@ -79,7 +79,7 @@ output score filename is `pdeep2testresult.csv`
     --DDAfile zzz2.csv 
     --outputfile yyyy2.json`
 
-The outputfile is `zzz1.csv` is the data predicted from model and `zzz2.csv` is real data. ALL in spectromine style.
+The outputfile is `zzz1.csv` is the data predicted from model and `zzz2.csv` is real data. ALL in Spectromine style.
 
 `python CosScoring.py 
     --scoringfile yyyy1.json 
