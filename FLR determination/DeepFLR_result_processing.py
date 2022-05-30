@@ -1,5 +1,38 @@
 import pandas as pd
 import numpy as np
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument(
+        "--inputfile",
+        default=None,
+        type=str,
+        required=True,
+        help="inputfilepath",
+    )
+parser.add_argument(
+        "--maxquantfile",
+        default=None,
+        # default="./output_train/train_pred_gold_ner.json",
+        type=str,
+        required=False,
+        help="inputmaxquantfile",
+    )
+parser.add_argument(
+        "--outputfile",
+        default=None,
+        # default="./output_train/train_pred_gold_ner.json",
+        type=str,
+        required=False,
+        help="output filename",
+    )
+
+
+    
+args = parser.parse_args()
+inputfile=args.inputfile
+outputfile=args.outputfile
+maxquantfile=args.maxquantfile
+
 df=pd.read_csv("PXD003344_Biological_sample_modelresult.csv")
 df["score"]=df["score"].str.replace("tensor(",'',regex=False)
 df["score"]=df["score"].str.replace(".)",'',regex=False)

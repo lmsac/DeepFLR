@@ -14,7 +14,7 @@ Training data path: `Tprocessed2.json`.
 
 3. Set hyperparameters in `utils.py`.
 
-4. `python train.py`
+4. change the fpaths in `train.py` to training dataset path and `python train.py`
 
 
 ## Test
@@ -54,7 +54,7 @@ if don't need mgfprocess
 
 the default outputfile is `decoyoutputscore.csv`
 
-## 4 pdeep2test
+## pdeep2test
 `python matrixwithdict.py 
     --do_ms2 
     --DDAfile zzz.csv 
@@ -68,7 +68,7 @@ The outputfile is the DDAprocessedfile below
 
 output score filename is `pdeep2testresult.csv`
 
-## 5 CosScoring for models
+## CosScoring for models
 `python matrixwithdict.py 
     --do_ms2 
     --DDAfile zzz1.csv 
