@@ -1,88 +1,52 @@
-
 # Readme
-##  Train
-Training data path: `Tprocessed2.json`.
-### Train MS/MS
-1. Use `matrixwithdict.py` (func:report2matrix(path)) to get target json file. The input.csv is in the form of Spectromine searching result.
+## Environments
+Main packages are as follows.\
+FastNLP                   0.6.0 \
+pytorch                   1.8.1 \
+transformers              4.12.5 
+
+## 1. Train
+Training data has been deposited to ProteomeXchange via the iProX partner repository with the dataset identifier PXD037580.
+
+### 1.1 Train MS/MS Prediction
+1. If you want to train your own model or finetune the model, you need `python matrixwithdict.py` to get the json file in the right format for training. Here the `finetunefile.csv` is in the form of spectromine. See the demo `finetune_demo.csv` in `demo_data`.
 
 `python matrixwithdict.py 
 --do_ms2 
---DDAfile input.csv 
---outputfile output.json`
+--DDAfile finetunefile.csv 
+--outputfile finetunefile.json`
 
-2. Use funcs in `mix_jsons.py` to mix or split json files
+2. You can set hyperparameters in `utils.py`.
 
-3. Set hyperparameters in `utils.py`.
+3. To set the training and validation dataset, you can set the filename in `train.py `. Normally we split the total dataset to get training and validation datse. And then 
+`python train.py `
 
-4. change the fpaths in `train.py` to training dataset path and `python train.py`
+## 2 Spectra Prediction for Decoys and Targets
+Suppose we have sequences including decoy sequences in `input.csv`.
+First we predict spectra:
 
-
-## Test
-1. Use `matrixwithdict.py` (func:report2irtmatrix(path)) to get target json file.
-
-`python matrixwithdict.py 
---do_ms2 
---DDAfile input.csv 
---outputfile output.json`
-
-2. `python test.py` or `testirt.py`
-
-## Spectral graph to sequence decoy FDR
 `python replace.py 
 --do_decoy 
 --no_target 
---inputfile input.csv` 
+--inputfile input.csv `
 
-outputfile is `input`+`modelmonomz.csv`, that is `inputmodelmonomz.csv`.
-If having the `--only_combine` we do only `combinerawresult.py`
+By default outputfile is `inputmodelmonomz.csv`.
 
-To get final score ,do the following, inputfile is the outputfile above, mgfdatafold is the folder containing files endwith `.mgf`. If it's your first time running, use `--do_mgfprocess`
+## 3 Cosine Similarity Calculation
+To get the cosine similarity between the predicted spectrum and the  experiemntal spectrum,do the following. The inputfile is`inputmodelmonomz.csv` ,the default outputfile is `decoyoutputscore.csv`. `mgffoldlocation` is the datafolder location of the 
+mgf files. For the first time we add `--do_mgfprocess` to transform mgf to json files.
 
 `python mgfprocess.py 
 --do_mgfprocess 
 --do_scoreprediction 
 --inputfile inputmodelmonomz.csv 
---outputfile modelresult.csv 
---mgfdatafold mann_mgf`
+--outputfile outputscore.csv 
+--mgfdatafold mgffoldlocation`
 
-otherwise,
+If not the first time or you have the json files, you don't need `--do_mgfprocess` like below.
 
 `python mgfprocess.py 
 --do_scoreprediction 
---inputfile inputmodelmonomz.csv  
---outputfile modelresult.csv
---mgfdatafold mann_mgf` 
-
-
-## pdeep2test
-`python matrixwithdict.py 
-    --do_ms2 
-    --DDAfile zzz.csv 
-    --outputfile yyyy.json`
-
-The outputfile is the DDAprocessedfile below
-
-`python pdeep2test.py 
-    --pdeep2jsonfile xxxx.json 
-    --DDAprocessedfile yyyy.json` 
-
-output score filename is `pdeep2testresult.csv`
-
-## CosScoring for models
-`python matrixwithdict.py 
-    --do_ms2 
-    --DDAfile zzz1.csv 
-    --outputfile yyyy1.json`
-
-`python matrixwithdict.py 
-    --do_ms2 
-    --DDAfile zzz2.csv 
-    --outputfile yyyy2.json`
-
-The outputfile is `zzz1.csv` is the data predicted from model and `zzz2.csv` is real data. ALL in Spectromine style.
-
-`python CosScoring.py 
-    --scoringfile yyyy1.json 
-    --DDAprocessedfile yyyy2.json` 
-
-output score filename is `CosScoringtestresult.csv`
+--inputfile inputmodelmonomz.csv 
+--outputfile outputscore.csv 
+--mgfdatafold mgf`
