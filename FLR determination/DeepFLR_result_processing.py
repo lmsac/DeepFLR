@@ -45,7 +45,7 @@ df["score"]=df["score"].str.replace("tensor(",'',regex=False)
 df["score"]=df["score"].str.replace(".)",'',regex=False)
 df["score"]=df["score"].str.replace(")",'',regex=False)
 df["score"]=df["score"].astype("float")
-#2963
+
 df1=pd.read_csv(sequencefile)
 df1.columns=["SourceFile","Fspectrum","PP.Charge","exp_strip_sequence","Peptide","key_x"]
 df=pd.merge(df,df1,on=["SourceFile","Fspectrum","key_x"])
@@ -84,11 +84,10 @@ print(zz.shape)
 ww=pd.merge(dfdelta,dftruemax,on=['Fspectrum','SourceFile',"Peptide"],how='right')
 ww=ww[['Fspectrum','SourceFile',"deltascore","score","key_x","striptrue","PEP.StrippedSequence"]]
 print(ww.shape)
-# ww.to_csv("delta_true_3.4.2.csv",index=False)
-#
+
 df=pd.concat([zz,ww])
 print(df.shape)
-df.to_csv("graph_model.csv",index=False)
+df.to_csv(outputfile1,index=False)
 
 
 df["deltascore"]=df["deltascore"].astype("float")
@@ -108,12 +107,10 @@ dftarget=dftarget.sort_values(ascending=True)
 dftarget = np.array(dftarget) #transfer to np.array
 dftarget = dftarget.tolist()
 for a in dftarget:
-    print(a)
     dfcutoff=df[df["deltascore"]>=a]
     if len(dfcutoff)==0:
         break
     dfcutoffdecoy=dfcutoff.loc[dfcutoff["striptrue"]!=dfcutoff["PEP.StrippedSequence"]]
-    # dfcutoffdecoy.to_csv("del1.csv",index=False)
     decoy_score = ((dftruenum+dfdecoynum)/dfdecoynum)*len(dfcutoffdecoy) / (len(dfcutoff))
     if d <= decoy_score:
         decoy_score = d
@@ -123,4 +120,4 @@ for a in dftarget:
     down+=1
     if decoy_score == 0:
         break
-out.to_csv(outputfile,index=False)
+out.to_csv(outputfile2,index=False)
