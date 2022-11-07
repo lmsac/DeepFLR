@@ -23,11 +23,18 @@ To deal with doubly phosphorylated peptides, target and decoy phosphopeptides ar
 ### DeepFLR FLR estimation
 
 To get DeepFLR FLR estimation,
-`python DeepFLR_result_processing.py --modelresultfile modelresult.csv --sequencefile sequence.csv --outputresult outputresult.csv --outputfileFLRPSM  outputfileFLRPSM.csv`
+`python DeepFLR FLR visualization.py --modelresultfile modelresult.csv --sequencefile sequence.csv  --outputfileFLRPSM  outputfileFLRPSM.csv`
 
 Here, `modelresult.csv` is the result from `model/mgfprocess.py`, `sequence.csv` is the output from `Targetdecoy_phosphopeptides_generation_{mono,multi}.py`.
+
+### DeepFLR result analysis
+To obtain the identification results obtained from DeepFLR for target FLR,
+
+`python DeepFLR_result_processing.py --modelresultfile modelresult.csv --inputfile1 msms.txt --inputfile2 Phospho (STY)Sites.txt --sequencefile sequence.csv  --cutoff num --outputresult outputresult.csv`
+
+Here, cutoff is the deltascore cutoff obrained from `FLR determination/DeepFLR FLR visualization.py` for target FLR.
 
 ### Maxquant result analysis
 To get Maxquant result analysis,
 
-`python MaxQuant_result_processing.py --inputfile msms.txt --outputresult outputresult.csv`
+`python MaxQuant_result_processing.py --inputfile msms.txt --inputfile1 Phospho (STY)Sites.txt  --outputresult outputresult.csv`
