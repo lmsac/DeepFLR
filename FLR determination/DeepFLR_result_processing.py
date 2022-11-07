@@ -22,16 +22,9 @@ parser.add_argument(
         default="outputresult.csv",
         type=str,
         required=False,
-        help="output filename",
+        help="output filename,phosphosites localized by DeepFLR for target FLR",
     )
 
-parser.add_argument(
-        "--outputfileFLRPSM",
-        default="outputfileFLRPSM.csv",
-        type=str,
-        required=False,
-        help="output filename",
-    )
 
 parser.add_argument(
         "--cutoff",
@@ -41,18 +34,26 @@ parser.add_argument(
         help="cutoff for estimated FLR",
     )
 parser.add_argument(
-        "--MSMSfile",
+        "--inputfile1",
         default=None,
         type=str,
         required=True,
-        help="sequencefile from Targetdecoy_phosphopeptides_generation_{mono,multi}.py",
-    )    
+        help="inputfile,searching result from Maxquant(msms.txt)",
+    ) 
+parser.add_argument(
+        "--inputfile2",
+        default=None,
+        type=str,
+        required=True,
+        help="inputfile,searching result from Maxquant(Phospho (STY)Sites.txt)",
+    ) 
 args = parser.parse_args()
 inputfile=args.modelresultfile
-outputfile1=args.outputresult
+inputfile1=args.inputfile1
+inputfile2=args.inputfile2
 sequencefile=args.sequencefile
-outputfile2=args.outputfileFLRPSM
 cutoff=args.cutoff
+outputfile=args.outputresult
 
 def ace(instance):
     if instance[1]=="4":
@@ -137,7 +138,7 @@ dfmodel.columns=['Spectrum','SourceFile',"PP.Charge", 'deltascore_model', 'score
        'key_model_1', 'Index_model']
 
 
-dfmsms=pd.read_csv("..\data\msms.txt",delimiter="\t")
+dfmsms=pd.read_csv(inputfile1,delimiter="\t")
 dfmsms=dfmsms[['Raw file', 'Scan number',  'Sequence',  'Modified sequence',"Charge",
        'id','Peptide ID', 'Mod. peptide ID', 'Evidence ID','Phospho (STY) site IDs']]
 dfmsms.columns=['SourceFile', 'Spectrum',  'striptrue',  'Peptide',"PP.Charge",
@@ -151,7 +152,7 @@ df["Phospho (STY) site IDs"]=df["Phospho (STY) site IDs"].astype("str")
 df = df.drop('Phospho (STY) site IDs', axis=1).join(
     df['Phospho (STY) site IDs'].str.split(";", expand=True).stack().reset_index(level=1, drop=True).rename('Phossite_IDs_maxq'))
 
-df1=pd.read_table("..\data\Phospho (STY)Sites.txt",delimiter="\t")
+df1=pd.read_table(inputfile1,delimiter="\t")
 df1=df1[['Proteins', 'Positions within proteins', 'Leading proteins', 'Protein','Phospho (STY) Probabilities','Position in peptide','Positions', 'Position','MS/MS IDs', 'Best localization MS/MS ID','Best score scan number',"id"]]
 df1.columns=['Proteins', 'Positions within proteins', 'Leading proteins', 'Protein','Phospho (STY) Probabilities','Position in peptide','Positions', 'Position','MS/MS IDs', 'Best localization MS/MS ID','Best score scan number',"Phossite_IDs_maxq"]
 df1["Phossite_IDs_maxq"]=df1["Phossite_IDs_maxq"].astype("str")
@@ -190,4 +191,4 @@ def combine(instance):
 df["model_proteinsite"]=df.apply(combine,axis=1)
 df=df.loc[~df["Protein"].str.contains("REV__")]
 df=df.loc[~df["Protein"].str.contains("CON__")]
-df.to_csv("Model_proteinsite_Deep_FLR.csv",index=False)
+df.to_csv(outputfile,index=False)
