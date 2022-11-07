@@ -28,13 +28,13 @@ To get DeepFLR FLR estimation,
 Here, `modelresult.csv` is the result from `model/mgfprocess.py`, `sequence.csv` is the output from `Targetdecoy_phosphopeptides_generation_{mono,multi}.py`.
 
 ### DeepFLR result analysis
-To obtain the identification results obtained from DeepFLR for target FLR,
+To obtain the identification results from DeepFLR for target FLR,
 
 `python DeepFLR_result_processing.py --modelresultfile modelresult.csv --inputfile1 msms.txt --inputfile2 Phospho (STY)Sites.txt --sequencefile sequence.csv  --cutoff num --outputresult outputresult.csv`
 
-Here, cutoff is the deltascore cutoff obrained from `FLR determination/DeepFLR FLR visualization.py` for target FLR.
+Here, cutoff is the deltascore cutoff obtained from `FLR determination/DeepFLR FLR visualization.py` for target FLR. Phospho (STY)Sites.txt is the result from Maxquant.
 
-### Maxquant result analysis
-To get Maxquant result analysis,
+### MaxQuant result analysis
+To get the identification results from MaxQuant,
 
 `python MaxQuant_result_processing.py --inputfile msms.txt --inputfile1 Phospho (STY)Sites.txt  --outputresult outputresult.csv`
