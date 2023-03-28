@@ -1,12 +1,7 @@
-#提取碎片，把不符合的losstype新开一行，填写True False,再把False删除
 import pandas as pd
 needmzdrop="modelirtdata.csv"
 savename="modelirtdatamonomz.csv"
 df=pd.read_csv(needmzdrop)
-# df.drop(['Unnamed: 0'], axis = 1,inplace=True)
-# df.drop(['kkk'], axis = 1,inplace=True)
-# df.to_csv("makingms2irtSigmamonomz.csv",index=False)
-print(df["key"])
 def drop(row):
     key=row["key"]
     key=list(key)
@@ -135,7 +130,7 @@ def FragmentMzzzbb(row):
             b+=dict[i]
         FIweight=b+ficharge*dict["proton"]-losstype[loss]
         fimz=FIweight/ficharge
-        print(fimz)
+        # print(fimz)
         return fimz
     if by=="y":
         FrgNumindex=len(key)-FrgNum

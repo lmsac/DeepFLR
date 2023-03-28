@@ -1,0 +1,7 @@
+bidict==0.22.0
+fastNLP==0.6.0
+numpy==1.18.5
+pandas==1.0.5
+pyteomics==4.5.5
+torch==1.8.1
+transformers==4.12.5

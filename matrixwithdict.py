@@ -36,7 +36,7 @@ def report2matrix(filename,outputname=None):
     fieldslen = range(len(fields))
     outputdataframe = pd.DataFrame(columns=fields)
 
-    print(outputdataframe)
+    # print(outputdataframe)
     if isinstance(filename,str):
         file = filename
         path0 = os.getcwd()
@@ -71,7 +71,7 @@ def report2matrix(filename,outputname=None):
             for _ in match:
                 _psequence = _psequence.replace(_, str(decorationdict[_]))
 
-            print(_psequence)
+            # print(_psequence)
 
             decoration = countdecoration(_psequence)
             length = len(decoration)
@@ -117,7 +117,7 @@ def resultreport2matrix(filename,name=None):
     fieldslen = range(len(fields))
     outputdataframe = pd.DataFrame(columns=fields)
 
-    print(outputdataframe)
+    # print(outputdataframe)
     if isinstance(filename,str):
         file = filename
         path0 = os.getcwd()
@@ -154,7 +154,7 @@ def resultreport2matrix(filename,name=None):
             for _ in match:
                 _psequence = _psequence.replace(_, str(decorationdict[_]))
 
-            print(_psequence)
+            # print(_psequence)
 
             decoration = countdecoration(_psequence)
             length = len(decoration)

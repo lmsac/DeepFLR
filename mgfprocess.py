@@ -168,12 +168,4 @@ if args.do_scoreprediction:
     total=total.drop_duplicates(subset=["iii"],keep="first")
     print("saving......")
     total.to_csv(finalname,index=False)
-
-    # total["score"]=total["iii"].apply(lambda x:kkdict[x])
-    #
-    # total=total.drop_duplicates(subset=["iii"],keep="first")
-    # total.to_csv("finaldata.csv",index=False)
-    # total=pd.read_csv("finaldata.csv")
-    # total=total.drop_duplicates(subset=["iii"],keep="first")
-    # total.to_csv("finaldata.csv",index=False)
     print(total)

@@ -62,7 +62,7 @@ out = pd.DataFrame(columns=["SourceFile","Spectrum","PP.Charge","exp_strip_seque
 for k in range(0,len(df)):
     count = 0
     sequence=df.loc[k,"key"]
-    print(sequence)
+    # print(sequence)
     sequence=list(sequence)
     SourceFile=df.loc[k,"SourceFile"]
     Spectrum = df.loc[k, "Spectrum"]
@@ -76,7 +76,7 @@ for k in range(0,len(df)):
             sty_list.append(x)
             sequence.insert(x+1,"1")
             sequence1=''.join(sequence)
-            print(sequence1)
+            # print(sequence1)
             out.loc[down]=[SourceFile,Spectrum,Charge,exp_strip_sequence,Peptide,sequence1]
             down+=1
             sequence.remove("1")
@@ -92,7 +92,7 @@ for k in range(0,len(df)):
             y.remove(x)
             y.remove(x+1)
         if x==len(sequence)-1:
-            print(sty_list)
+            # print(sty_list)
             stynum = 0
             if count <=len(y):
                 b = random.sample(y, count)
@@ -102,7 +102,7 @@ for k in range(0,len(df)):
                     sequence.insert(c + 1, "1")
                     stynum+=1
                     sequence1 = ''.join(sequence)
-                    print(sequence1)
+                    # print(sequence1)
                     out.loc[down]=[SourceFile,Spectrum,Charge,exp_strip_sequence,Peptide,sequence1]
                     down += 1
                     sequence.remove("1")
@@ -115,7 +115,7 @@ for k in range(0,len(df)):
                     sequence.insert(c + 1, "1")
                     stynum += 1
                     sequence1 = ''.join(sequence)
-                    print(sequence1)
+                    # print(sequence1)
                     out.loc[down]=[SourceFile,Spectrum,Charge,exp_strip_sequence,Peptide,sequence1]
                     down += 1
                     sequence.remove("1")

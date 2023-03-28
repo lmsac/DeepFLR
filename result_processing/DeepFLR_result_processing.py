@@ -152,7 +152,7 @@ df["Phospho (STY) site IDs"]=df["Phospho (STY) site IDs"].astype("str")
 df = df.drop('Phospho (STY) site IDs', axis=1).join(
     df['Phospho (STY) site IDs'].str.split(";", expand=True).stack().reset_index(level=1, drop=True).rename('Phossite_IDs_maxq'))
 
-df1=pd.read_table(inputfile1,delimiter="\t")
+df1=pd.read_table(inputfile2,delimiter="\t")
 df1=df1[['Proteins', 'Positions within proteins', 'Leading proteins', 'Protein','Phospho (STY) Probabilities','Position in peptide','Positions', 'Position','MS/MS IDs', 'Best localization MS/MS ID','Best score scan number',"id"]]
 df1.columns=['Proteins', 'Positions within proteins', 'Leading proteins', 'Protein','Phospho (STY) Probabilities','Position in peptide','Positions', 'Position','MS/MS IDs', 'Best localization MS/MS ID','Best score scan number',"Phossite_IDs_maxq"]
 df1["Phossite_IDs_maxq"]=df1["Phossite_IDs_maxq"].astype("str")
@@ -167,7 +167,7 @@ for k in range(len(df)):
     print(position_imply)
     position_protein = df.loc[k, "Position"]
     print(position_protein)
-    if not np.isnan(position_model):
+    if not np.isnan(position_model) and not np.isnan(position_imply):
         position_delta=int(position_model)-int(position_imply)
         position_protein_model=int(position_delta)+int(position_protein)
         df.loc[k,"position_protein_model"]=position_protein_model

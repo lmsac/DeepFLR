@@ -15,8 +15,7 @@ import subprocess
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "--inputfile",
-    default="zhaodan_only_phos_DDA_exp(1)processed.json",
-    # default="./output_train/train_pred_gold_ner.json",
+    default="./output_train/train_pred_gold_ner.json",
     type=str,
     required=True,
     help="DDA processed file,if using no_target ,use zz csv file",
@@ -24,7 +23,6 @@ parser.add_argument(
 parser.add_argument(
     "--outputfile",
     default="repsequence.json",
-    # default="./output_train/train_pred_gold_ner.json",
     type=str,
     # required=True,
     help="output filename",
@@ -172,41 +170,10 @@ else:
     ###########model
 
     config=BertConfig.from_pretrained("bert-base-uncased")
-    bestmodelpath="/remote-home/yxwang/Finalcut/checkpoints/pretrainedbertbaseconfig_trainall/best__2deepchargeModelms2_bert_mediancos_2021-09-20-01-17-50-729399"###########一直用的bestmodel,pretrainbert
-    # bestmodelpath="/remote-home/yxwang/Finalcut/checkpoints/bert-base-uncased/pretrained_trainall_ss/furthermann/best__2deepchargeModelms2_bert_mediancos_2021-09-30-13-31-45-442035"###mannfurther
-    # bestmodelpath="/remote-home/yxwang/Finalcut/fintune/PXD3344_fintune_training_dataset/checkpoints/best__2deepchargeModelms2_bert_mediancos_2021-11-28-10-53-16-175257"##checkpoints前的名字就是数据集的名字
-    # bestmodelpath="/remote-home/yxwang/Finalcut/checkpoints/bert-base-uncased/pretrained_trainall_ss/furthermann2/best__2deepchargeModelms2_bert_mediancos_2021-10-08-11-08-47-328719"
-    # bestmodelpath="/remote-home/yxwang/Finalcut/fintune/mann20200317_finetune/checkpoints/best__2deepchargeModelms2_bert_mediancos_2021-11-18-03-08-50-936822"#####mannfurther后来的1118
-    bestmodelpath="/remote-home/yxwang/Finalcut/fintune/PXD3344_fintune/checkpoints/best__2deepchargeModelms2_bert_mediancos_2022-02-15-05-29-37-714796"###########PXD
-    bestmodelpath="/remote-home/yxwang/Finalcut/fintune/20200413_145038_PXD14525_fintune_Fragment_Report_20200420_120949dropnan/checkpoints/best__2deepchargeModelms2_bert_mediancos_2021-12-27-06-53-44-284913"
+    bestmodelpath="phosT/best__2deepchargeModelms2_bert_mediancos_2021-09-20-01-17-50-729399"###########一直用的bestmodel,pretrainbert
     deepms2=_2deepchargeModelms2_bert(config)
     bestmodel=torch.load(bestmodelpath).state_dict()
     deepms2.load_state_dict(bestmodel)
-
-    # config=RobertaConfig.from_pretrained("roberta-base")
-    # bestmodelpath="/remote-home/yxwang/Finalcut/checkpoints/pretrainedrobertabaseconfig_trainall/best__2deepchargeModelms2_roberta_mediancos_2021-09-20-01-49-41-996848"
-    # deepms2=_2deepchargeModelms2_roberta(config)
-    # bestmodel=torch.load(bestmodelpath).state_dict()
-    # deepms2.load_state_dict(bestmodel)
-    ###############################read pretrained model
-    # deepms2=_2deepchargeModelms2_all(maxlength,acid_size,embed_size,nhead,num_layers,dropout=dropout,num_col=num_col)
-    # bestmodelpath="AllphosT/best__2deepchargeModelms2_all_mediancos_2021-06-02-11-38-03-717982"
-    # bestmodelpath="AllphosT_contrast/best__2deepchargeModelms2_all_contrast_mediancos_2021-08-25-13-21-41-010527"###warmup 3000 batch 128 seed 101 cos:95
-    # bestmodelpath="AllphosT_contrast/best__2deepchargeModelms2_all_contrast_mediancos_2021-08-25-13-23-30-588344"######warmup500 seed 42 batch 1024 cos:88
-    # bestmodelpath="AllphosT_contrast/best__2deepchargeModelms2_all_contrast_mediancos_2021-08-26-01-46-06-681916"######warmup500 seed 42 batch 1024 cos:96,lr 4e-6 ####应该是目前的最好结果
-    # bestmodelpath="AllphosT_contrast_mse/best_epoch6" ##95 100:1 3000warmup 4e-6
-    # bestmodelpath="AllphosT_contrast_mse/best_epoch7" ##93 100:1 3000warmup 4e-6
-    # bestmodelpath="AllphosT_contrast_mse/best_epoch8" ##91 100:1 3000warmup 4e-6
-    # bestmodelpath="AllphosT_contrast_mse/best_epoch9"###86
-    # bestmodelpath="mann_further/best__2deepchargeModelms2_all_mediancos_2021-08-30-14-58-37-168900"
-    # bestmodelpath="mann_contrast_mse/best__2deepchargeModelms2_all_contrast_mediancos_2021-08-30-15-00-42-684564"
-    # bestmodelpath="phos1further/best__2deepchargeModelms2_all_mediancos_2021-08-31-15-25-15-295573"
-
-    # bestmodelpath="mann_chaifen_contrast/best__2deepchargeModelms2_all_contrast_mediancos_2021-09-02-10-58-40-147507"
-    # bestmodelpath="mann_chaifen_contrast_mse/best__2deepchargeModelms2_all_contrast_mediancos_2021-09-02-11-04-32-214007"
-    # bestmodelpath="mann_chaifen_msecontrast/best__2deepchargeModelms2_all_contrast_mediancos_2021-09-13-10-49-15-313052"
-    # bestmodel=torch.load(bestmodelpath).state_dict()
-    # deepms2.load_state_dict(bestmodel)
 
     ###########Trainer
 
@@ -220,13 +187,33 @@ else:
 
     ############tester
 
-
+    
     pptester=Tester(model=deepms2,device=device,data=totaldata,
                     loss=loss,metrics=metrics,
                     batch_size=BATCH_SIZE)
+                    
+    from timeit import default_timer as timer
+    train_time_start = timer()
     pptester.test()
     
+    train_time_end = timer()
+    def print_train_time(start: float, end: float, device: torch.device = None):
+        """Prints difference between start and end time.
 
+        Args:
+            start (float): Start time of computation (preferred in timeit format). 
+            end (float): End time of computation.
+            device ([type], optional): Device that compute is running on. Defaults to None.
+
+        Returns:
+            float: time between start and end in seconds (higher is longer).
+        """
+        total_time = end - start
+        print(f"Train time on {device}: {total_time:.3f} seconds")
+        return total_time
+    total_train_time_model_2 = print_train_time(start=train_time_start,
+                                           end=train_time_end,
+                                           device=device)
     if args.do_decoy:
         if args.concat:
             print("####################using concat instead of merge ########################")

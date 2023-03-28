@@ -203,7 +203,7 @@ class CossimilarityMetricfortest(MetricBase):
             
         else:
             s=torch.sum(cos(pred, target)).item()
-            print(s)
+            # print(s)
             if math.isnan(s):
                 print("getnan:{}".format(_id.cpu().numpy().tolist()[0]))
                 self.nansequence.loc[self.nan] = [sequence.cpu().numpy().tolist(),charge.cpu().numpy().tolist(),decoration.cpu().numpy().tolist()]

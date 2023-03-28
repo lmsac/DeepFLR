@@ -366,7 +366,7 @@ def main():
                 b += dict[i]
             FIweight = b + ficharge * dict["proton"] - losstype[loss]
             fimz = FIweight / ficharge
-            print(fimz)
+            # print(fimz)
             return fimz
         if by == "y":
             FrgNumindex = len(key) - FrgNum

@@ -20,7 +20,38 @@ from Bertmodel import _2deepchargeModelms2_bert,_2deepchargeModelms2_roberta,_2d
 ####################Const
 from utils import *
 ####################预处理数据集
-trainpathcsv="/remote-home/yxwang/Finalcut/fintune/PXD3344_fintune.csv"
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument(
+        "--inputfile",
+        default=None,
+        type=str,
+        required=True,
+        help="inputfile used for finetune or retrain DeepFLR ",
+    )
+parser.add_argument(
+        "--modelpath",
+        default="phosT/best__2deepchargeModelms2_bert_mediancos_2021-09-20-01-17-50-729399",
+        type=str,
+        required=False,
+        help="model path",
+    )
+parser.add_argument(
+        "--type",
+        default="finetune",
+        type=str,
+        required=False,
+        help="finetune/train",
+        choices=["finetune","train"]
+    )
+
+args = parser.parse_args()
+
+inputfile=args.inputfile
+bestmodelpath=args.modelpath
+type=args.type
+
+trainpathcsv=inputfile
 traindatajson=trainpathcsv[:-4]+".json"
 
 os.system("python matrixwithdict.py \
@@ -28,13 +59,6 @@ os.system("python matrixwithdict.py \
 --DDAfile {} \
 --outputfile {}".format(trainpathcsv,traindatajson))
 
-# devpathcsv="/remote-home/yxwang/Finalcut/fintune/MSMS——fintune/mouse_fintune_2/mouse_fintune_test_dataset.csv"
-
-# devdatajson=devpathcsv[:-4]+".json"
-# os.system("python matrixwithdict.py \
-# --do_ms2 \
-# --DDAfile {} \
-# --outputfile {}".format(devpathcsv,devdatajson))
 ##############
 set_seed(seed)
 weight_decay=1e-2
@@ -75,25 +99,20 @@ def savingFastnlpdataset_DataFrame(dataset):
 # trainframe.to_json("AllphosT/Tprocessed2_traindata.json")
 
 
-###########testdata
-# testfile="/remote-home/yxwang/Finalcut/fintune/DeepFLR/fintune/mouse_fintune/Model_mouse_fintune_test_dataset.json"
-# testdatabundle=PPeptidePipe(vocab=vocab).process_from_file(paths=testfile)
-# testdata=testdatabundle.get_dataset("train")
 ###########model
-pretrainmodel="bert-base-uncased"
-
-# deepms2=_2deepchargeModelms2_bert.from_pretrained(pretrainmodel)
+if type=="train":
+    pretrainmodel="bert-base-uncased"
+    deepms2=_2deepchargeModelms2_bert.from_pretrained(pretrainmodel,cache_dir="./")
 
 # deepms2=_2deepchargeModelms2_all(maxlength,acid_size,embed_size,nhead,num_layers,dropout=dropout,num_col=num_col)
 # ##############################read pretrained model
-config=BertConfig.from_pretrained("bert-base-uncased")
-# bestmodelpath="/remote-home/yxwang/Finalcut/checkpoints/bert-base-uncased/pretrained_trainall_ss/furthermann/best__2deepchargeModelms2_bert_mediancos_2021-09-30-13-31-45-442035"###mannfintuned
-bestmodelpath="/remote-home/yxwang/Finalcut/checkpoints/pretrainedbertbaseconfig_trainall/best__2deepchargeModelms2_bert_mediancos_2021-09-20-01-17-50-729399"##bertpretrained
-deepms2=_2deepchargeModelms2_bert(config)
-bestmodel=torch.load(bestmodelpath).state_dict()
-deepms2.load_state_dict(bestmodel)
+if type=="finetune":
+    config=BertConfig.from_pretrained("bert-base-uncased")
+    bestmodelpath=bestmodelpath
+    deepms2=_2deepchargeModelms2_bert(config)
+    bestmodel=torch.load(bestmodelpath).state_dict()
+    deepms2.load_state_dict(bestmodel)
 ###########Trainer
-
 
 from fastNLP import Const
 metrics=CossimilarityMetricfortest(savename=None,pred=Const.OUTPUT,target=Const.TARGET,seq_len='seq_len',
@@ -104,11 +123,6 @@ import torch.optim as optim
 optimizer=optim.AdamW(deepms2.parameters(),lr=lr)
 from fastNLP import WarmupCallback,SaveModelCallback
 save_path=filename[:-5]+"/checkpoints"
-# save_path=os.path.join(path0,"checkpoints/"+pretrainmodel+"/pretrained_trainall_ss/combinemann_all")
-callback=[WarmupCallback(warmupsteps)]
-callback.append(WandbCallback(project="Finalcut",name=save_path,config={"lr":lr,"seed":seed,
-"Batch_size":BATCH_SIZE,"warmupsteps":warmupsteps,"temperature":None,"weight_decay":None}))
-callback.append(SaveModelCallback(save_path,top=3))
 ############trainer
 from fastNLP import Trainer
 
@@ -119,6 +133,6 @@ if vocab_save:
 pptrainer=Trainer(model=deepms2,    train_data=traindata,
                     device=device,  dev_data=devdata,
                 save_path=save_path,
-                  loss=loss,metrics=metrics,callbacks=callback,
+                  loss=loss,metrics=metrics,
                    optimizer=optimizer,n_epochs=finetune_epoch,batch_size=batch_size,update_every=int(BATCH_SIZE/batch_size),dev_batch_size=batch_size)
 pptrainer.train()
