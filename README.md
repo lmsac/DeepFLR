@@ -12,7 +12,7 @@ Users can install packages using the command provided in the User Guide, or use 
 # Tutorial
 Tutorials are avaliable in [User guide.docx](https://github.com/yuz2011/DeepFLR/blob/main/User%20guide.docx).
 # Model
-Users can either use the model parameters used in DeepFLR or finetune the model or retrain a model following the  [User guide.docx](https://github.com/yuz2011/DeepFLR/blob/main/User%20guide.docx). The Model parameters "best__2deepchargeModelms2_bert_mediancos_2021-09-20-01-17-50-729399" (328 MB) can be downloaded from [Model](https://github.com/yuz2011/DeepFLR/releases/tag/Model) and put it in `phosT` folder.
+Users can either use the model parameters used in DeepFLR or finetune the model or retrain a model following the  [User guide.docx](https://github.com/yuz2011/DeepFLR/blob/main/User%20guide.docx). The Model parameters "best__2deepchargeModelms2_bert_mediancos_2021-09-20-01-17-50-729399" (329 MB) can be downloaded from [Model](https://github.com/yuz2011/DeepFLR/releases/tag/Model) and put it in `phosT` folder.
 # Publications
 Waiting for publication...([paper]())
 
